@@ -1,3 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\baidumapapi_map_v4_1_1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="930064f0a91ff20ceb8dd4504b7dadec5aabea82">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\baidumapapi_map_v4_1_1_0248dae585eba2f76c100f42ecb1a9c15c0f6996\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\baidumapapi_base_v4_1_1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="00cd7d6a741c6a922c9cf7b0db52a357ebf12cdb">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\baidumapapi_base_v4_1_1_461fc105902eee693920ccae490ab01be59e204d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_8928acb55bd3bc866db4ad3a48271faae17fcaf9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\baidumapapi_search_v4_1_1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b73dac26619f94061d28c54a7982ae8e0e783903">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\baidumapapi_search_v4_1_1_b36ac759aa79e20e61da2c875679233b143dfe10\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\lenovo\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-22.2.1_d592833a1d0919931e3692d55e5c5fb7bab0f699\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\lenovo\.android\build-cache\5435acda591e0ffdfa595ceaadbd2dc946543f1c\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_f0ecc71129cb125fdb180a5ec2d95da3a04b653c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\baidumapapi_radar_v4_1_1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ec3b3b79fdcc8fe059676554e31053027043edf8">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\baidumapapi_radar_v4_1_1_af60f86b0380e9de12ef05be41916339f4dd177e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\locSDK_6.13.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2cdb37444b41b42e1ce5a8a27e5d3c22e1c57479">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\locSDK_6.13_098385d018c3362361b8962d600e78e6113f9a1d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="7844f866d1e2fd734ec4e1ef2b0b553d9ff9e0f7">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_40e2d66cb21362b2f533c02d4ee125a1b3ce2c56\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\baidumapapi_cloud_v4_1_1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="93ef91d018051b8b5e001eb5e106b983fee8a549">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\baidumapapi_cloud_v4_1_1_bbcec26864d1dccec69fb377251151e27eb933d5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\AndroidProject\BaiduMapsApiASDemo\app\libs\baidumapapi_util_v4_1_1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d5630c44b212b90ad64c2bc2a994cbf28d1b08a7">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\2\baidumapapi_util_v4_1_1_eda2ad7a5759eae2a788afe2f686b6890e3fc851\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\lenovo\.android\build-cache\7b23c65f3433293acb5c4acd4b67f8bb8c8c3a34\output\jars\libs\internal_impl-22.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-22.2.1_6f2b4c6a43c2b14606326af223985b73aecaae46\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\lenovo\.android\build-cache\7b23c65f3433293acb5c4acd4b67f8bb8c8c3a34\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f8efd0096475e0daf054267b61544e10dc776503">
+        <dex dex="D:\AndroidProject\BaiduMapsApiASDemo\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_12ce4bbda5b49a84d088b044ee318e8b507f93ec\classes.dex" />
+    </item>
+
+</items>
