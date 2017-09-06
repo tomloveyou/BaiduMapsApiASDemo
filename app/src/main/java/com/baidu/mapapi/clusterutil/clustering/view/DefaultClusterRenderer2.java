@@ -12,13 +12,10 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.ArcShape;
 import android.graphics.drawable.shapes.OvalShape;
-import android.graphics.drawable.shapes.PathShape;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,10 +25,11 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 
+
 import com.baidu.mapapi.clusterutil.MarkerManager;
 import com.baidu.mapapi.clusterutil.clustering.Cluster;
 import com.baidu.mapapi.clusterutil.clustering.ClusterItem;
-import com.baidu.mapapi.clusterutil.clustering.ClusterManager;
+import com.baidu.mapapi.clusterutil.clustering.ClusterManager2;
 import com.baidu.mapapi.clusterutil.projection.Point;
 import com.baidu.mapapi.clusterutil.projection.SphericalMercatorProjection;
 import com.baidu.mapapi.clusterutil.ui.IconGenerator;
@@ -63,14 +61,14 @@ import static com.baidu.mapapi.clusterutil.clustering.algo.NonHierarchicalDistan
 
 
 /**
- * The default view for a ClusterManager. Markers are animated in and out of clusters.
+ * The default view for a ClusterManager2. Markers are animated in and out of clusters.
  */
-public class DefaultClusterRenderer<T extends ClusterItem> implements
-        com.baidu.mapapi.clusterutil.clustering.view.ClusterRenderer<T> {
+public class DefaultClusterRenderer2<T extends ClusterItem> implements
+        ClusterRenderer2<T> {
     private static final boolean SHOULD_ANIMATE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     private final BaiduMap mMap;
     private final IconGenerator mIconGenerator;
-    private final ClusterManager<T> mClusterManager;
+    private final ClusterManager2<T> mClusterManager;
     private final float mDensity;
 
     private static final int[] BUCKETS = {10, 20, 50, 100, 200, 500, 1000};
@@ -115,23 +113,22 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
 
     private final ViewModifier mViewModifier = new ViewModifier();
 
-    private ClusterManager.OnClusterClickListener<T> mClickListener;
-    private ClusterManager.OnClusterInfoWindowClickListener<T> mInfoWindowClickListener;
-    private ClusterManager.OnClusterItemClickListener<T> mItemClickListener;
-    private ClusterManager.OnClusterItemInfoWindowClickListener<T> mItemInfoWindowClickListener;
+    private ClusterManager2.OnClusterClickListener<T> mClickListener;
+    private ClusterManager2.OnClusterInfoWindowClickListener<T> mInfoWindowClickListener;
+    private ClusterManager2.OnClusterItemClickListener<T> mItemClickListener;
+    private ClusterManager2.OnClusterItemInfoWindowClickListener<T> mItemInfoWindowClickListener;
 
-    public DefaultClusterRenderer(Context context, BaiduMap map, ClusterManager<T> clusterManager) {
+    public DefaultClusterRenderer2(Context context, BaiduMap map, ClusterManager2<T> ClusterManager2) {
         mMap = map;
         mDensity = context.getResources().getDisplayMetrics().density;
         mIconGenerator = new IconGenerator(context);
         mIconGenerator.setContentView(makeSquareTextView(context));
         mIconGenerator.setTextAppearance(R.style.ClusterIcon_TextAppearance);
 
+            mIconGenerator.setBackground(makeClusterBackground());
 
-            mIconGenerator.setBackground(context.getResources().getDrawable(R.drawable.fixpoint));
 
-
-        mClusterManager = clusterManager;
+        mClusterManager = ClusterManager2;
     }
 
     @Override
@@ -163,7 +160,7 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
 
         mColoredCircleBackground = new ShapeDrawable(new OvalShape());
         ShapeDrawable outline = new ShapeDrawable(new OvalShape());
-
+       
         outline.getPaint().setColor(0x80ffffff); // Transparent white.
         LayerDrawable background = new LayerDrawable(new Drawable[]{outline, mColoredCircleBackground});
         int strokeWidth = (int) (mDensity * 3);
@@ -334,7 +331,7 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
 
         @SuppressLint("NewApi")
         public void run() {
-            if (clusters.equals(DefaultClusterRenderer.this.mClusters)) {
+            if (clusters.equals(DefaultClusterRenderer2.this.mClusters)) {
                 mCallback.run();
                 return;
             }
@@ -352,9 +349,9 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
             // Find all of the existing clusters that are on-screen. These are candidates for
             // markers to animate from.
             List<Point> existingClustersOnScreen = null;
-            if (DefaultClusterRenderer.this.mClusters != null && SHOULD_ANIMATE) {
+            if (DefaultClusterRenderer2.this.mClusters != null && SHOULD_ANIMATE) {
                 existingClustersOnScreen = new ArrayList<Point>();
-                for (Cluster<T> c : DefaultClusterRenderer.this.mClusters) {
+                for (Cluster<T> c : DefaultClusterRenderer2.this.mClusters) {
                     if (shouldRenderAsCluster(c) && visibleBounds.contains(c.getPosition())) {
                         Point point = mSphericalMercatorProjection.toPoint(c.getPosition());
                         existingClustersOnScreen.add(point);
@@ -423,7 +420,7 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
             markerModifier.waitUntilFree();
 
             mMarkers = newMarkers;
-            DefaultClusterRenderer.this.mClusters = clusters;
+            DefaultClusterRenderer2.this.mClusters = clusters;
             mZoom = zoom;
 
             mCallback.run();
@@ -436,24 +433,22 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
     }
 
     @Override
-    public void setOnClusterClickListener(ClusterManager.OnClusterClickListener<T> listener) {
+    public void setOnClusterClickListener(ClusterManager2.OnClusterClickListener<T> listener) {
         mClickListener = listener;
     }
 
     @Override
-    public void setOnClusterInfoWindowClickListener(ClusterManager
-                                                                .OnClusterInfoWindowClickListener<T> listener) {
+    public void setOnClusterInfoWindowClickListener(ClusterManager2 .OnClusterInfoWindowClickListener<T> listener) {
         mInfoWindowClickListener = listener;
     }
 
     @Override
-    public void setOnClusterItemClickListener(ClusterManager.OnClusterItemClickListener<T> listener) {
+    public void setOnClusterItemClickListener(ClusterManager2.OnClusterItemClickListener<T> listener) {
         mItemClickListener = listener;
     }
 
     @Override
-    public void setOnClusterItemInfoWindowClickListener(ClusterManager
-                                                                    .OnClusterItemInfoWindowClickListener<T> listener) {
+    public void setOnClusterItemInfoWindowClickListener(ClusterManager2.OnClusterItemInfoWindowClickListener<T> listener) {
         mItemInfoWindowClickListener = listener;
     }
 
@@ -712,9 +707,9 @@ public class DefaultClusterRenderer<T extends ClusterItem> implements
         int bucket = getBucket(cluster);
         BitmapDescriptor descriptor = mIcons.get(bucket);
         if (descriptor == null) {
-         /*   if (mClusterManager.getMangeType()!=1){
+
                 mColoredCircleBackground.getPaint().setColor(getColor(bucket));
-            }*/
+
 
             descriptor = BitmapDescriptorFactory.fromBitmap(mIconGenerator.makeIcon(getClusterText(bucket)));
             mIcons.put(bucket, descriptor);

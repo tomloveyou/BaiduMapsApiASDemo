@@ -18,6 +18,7 @@ import com.baidu.mapapi.clusterutil.clustering.algo.PreCachingAlgorithmDecorator
 import com.baidu.mapapi.clusterutil.clustering.view.ClusterRenderer;
 import com.baidu.mapapi.clusterutil.clustering.view.ClusterRenderer2;
 import com.baidu.mapapi.clusterutil.clustering.view.DefaultClusterRenderer;
+import com.baidu.mapapi.clusterutil.clustering.view.DefaultClusterRenderer2;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.Marker;
@@ -33,7 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * ClusterManager should be added to the map
  * <li>
  */
-public class ClusterManager<T extends ClusterItem> implements
+public class ClusterManager2<T extends ClusterItem> implements
         BaiduMap.OnMapStatusChangeListener, BaiduMap.OnMarkerClickListener {
     private final MarkerManager mMarkerManager;
     private final MarkerManager.Collection mMarkers;
@@ -42,8 +43,8 @@ public class ClusterManager<T extends ClusterItem> implements
     private Algorithm<T> mAlgorithm;
 
     private final ReadWriteLock mAlgorithmLock = new ReentrantReadWriteLock();
-    private ClusterRenderer<T> mRenderer;
-    private ClusterRenderer2<T> mRenderer2;
+
+    private ClusterRenderer2<T> mRenderer;
     private BaiduMap mMap;
     private MapStatus mPreviousCameraPosition;
     private ClusterTask mClusterTask;
@@ -58,7 +59,7 @@ public class ClusterManager<T extends ClusterItem> implements
     Handler handler;
     int result;
 
-    public ClusterManager(Context context, BaiduMap map, int type) {
+    public ClusterManager2(Context context, BaiduMap map, int type) {
         this(context, map, new MarkerManager(map));
         this.ItemType = type;
     }
@@ -67,13 +68,13 @@ public class ClusterManager<T extends ClusterItem> implements
         return ItemType;
     }
 
-    public ClusterManager(Context context, BaiduMap map, MarkerManager markerManager) {
+    public ClusterManager2(Context context, BaiduMap map, MarkerManager markerManager) {
         mMap = map;
         mMarkerManager = markerManager;
         mClusterMarkers = markerManager.newCollection();
         mMarkers = markerManager.newCollection();
 
-        mRenderer = new DefaultClusterRenderer<T>(context, map, this);
+        mRenderer = new DefaultClusterRenderer2<T>(context, map, this);
         mAlgorithm = new PreCachingAlgorithmDecorator<T>(new NonHierarchicalDistanceBasedAlgorithm<T>());
         mClusterTask = new ClusterTask();
         mRenderer.onAdd();
@@ -94,7 +95,7 @@ public class ClusterManager<T extends ClusterItem> implements
         return mMarkerManager;
     }
 
-    public void setRenderer(ClusterRenderer<T> view) {
+    public void setRenderer(ClusterRenderer2<T> view) {
         mRenderer.setOnClusterClickListener(null);
         mRenderer.setOnClusterItemClickListener(null);
         mClusterMarkers.clear();
