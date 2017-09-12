@@ -66,6 +66,12 @@ public class NonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> implem
     }
 
     @Override
+    public void updateItem(T item) {
+        removeItem(item);
+        addItem(item);
+    }
+
+    @Override
     public void clearItems() {
         synchronized (mQuadTree) {
             mItems.clear();
@@ -76,11 +82,22 @@ public class NonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> implem
     @Override
     public void removeItem(T item) {
         // TODO: delegate QuadItem#hashCode and QuadItem#equals to its item.
-        throw new UnsupportedOperationException("NonHierarchicalDistanceBasedAlgorithm.remove not implemented");
+        final QuadItem<T> quadItem = new QuadItem<T>(item);
+
+        synchronized (mQuadTree) {
+            for (QuadItem<T> items : mItems) {
+                if (items.getPosition() == quadItem.getPosition()) {
+                    mItems.remove(items);
+                    mQuadTree.remove(items);
+                    break;
+                }
+            }
+        }
     }
 
     /**
-     *  cluster算法核心
+     * cluster算法核心
+     *
      * @param zoom map的级别
      * @return
      */

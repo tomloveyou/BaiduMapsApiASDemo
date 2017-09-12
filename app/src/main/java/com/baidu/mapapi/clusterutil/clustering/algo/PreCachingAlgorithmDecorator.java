@@ -41,6 +41,12 @@ public class PreCachingAlgorithmDecorator<T extends ClusterItem> implements Algo
     }
 
     @Override
+    public void updateItem(T item) {
+        mAlgorithm.updateItem(item);
+        clearCache();
+    }
+
+    @Override
     public void clearItems() {
         mAlgorithm.clearItems();
         clearCache();

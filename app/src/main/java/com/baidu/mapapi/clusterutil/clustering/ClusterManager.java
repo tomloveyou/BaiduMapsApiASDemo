@@ -16,7 +16,6 @@ import com.baidu.mapapi.clusterutil.clustering.algo.Algorithm;
 import com.baidu.mapapi.clusterutil.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 import com.baidu.mapapi.clusterutil.clustering.algo.PreCachingAlgorithmDecorator;
 import com.baidu.mapapi.clusterutil.clustering.view.ClusterRenderer;
-import com.baidu.mapapi.clusterutil.clustering.view.ClusterRenderer2;
 import com.baidu.mapapi.clusterutil.clustering.view.DefaultClusterRenderer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
@@ -43,7 +42,7 @@ public class ClusterManager<T extends ClusterItem> implements
 
     private final ReadWriteLock mAlgorithmLock = new ReentrantReadWriteLock();
     private ClusterRenderer<T> mRenderer;
-    private ClusterRenderer2<T> mRenderer2;
+
     private BaiduMap mMap;
     private MapStatus mPreviousCameraPosition;
     private ClusterTask mClusterTask;
@@ -125,6 +124,7 @@ public class ClusterManager<T extends ClusterItem> implements
     public void clearItems() {
         mAlgorithmLock.writeLock().lock();
         try {
+
             mAlgorithm.clearItems();
         } finally {
             mAlgorithmLock.writeLock().unlock();
@@ -145,11 +145,21 @@ public class ClusterManager<T extends ClusterItem> implements
         mAlgorithmLock.writeLock().lock();
         try {
             mAlgorithm.addItem(myItem);
+
         } finally {
             mAlgorithmLock.writeLock().unlock();
         }
+        cluster();
     }
-
+    public void updateItem(T item) {
+        mAlgorithmLock.writeLock().lock();
+        try {
+            mAlgorithm.updateItem(item);
+        } finally {
+            mAlgorithmLock.writeLock().unlock();
+        }
+        cluster();
+    }
     public void removeItem(T item) {
         mAlgorithmLock.writeLock().lock();
         try {
@@ -157,6 +167,7 @@ public class ClusterManager<T extends ClusterItem> implements
         } finally {
             mAlgorithmLock.writeLock().unlock();
         }
+        cluster();
     }
 
     /**

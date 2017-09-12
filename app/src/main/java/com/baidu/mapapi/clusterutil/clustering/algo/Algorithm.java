@@ -19,6 +19,8 @@ public interface Algorithm<T extends ClusterItem> {
 
     void addItems(Collection<T> items);
 
+    void updateItem(T item);
+
     void clearItems();
 
     void removeItem(T item);

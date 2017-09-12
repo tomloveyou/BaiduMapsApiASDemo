@@ -9,11 +9,11 @@ import android.os.Bundle;
 import com.baidu.mapapi.clusterutil.clustering.Cluster;
 import com.baidu.mapapi.clusterutil.clustering.ClusterItem;
 import com.baidu.mapapi.clusterutil.clustering.ClusterManager;
-import com.baidu.mapapi.clusterutil.clustering.ClusterManager2;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMap.OnMapLoadedCallback;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -28,6 +28,8 @@ import java.util.List;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -44,12 +46,14 @@ import baidumapsdk.demo.R;
 /**
  * 此Demo用来说明点聚合功能
  */
-public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
+public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback, View.OnClickListener {
 
     MapView mMapView;
     BaiduMap mBaiduMap;
     MapStatus ms;
-
+    private Button maker_add, maker_update, maker_remove;
+    private List<MyItem> items = new ArrayList<MyItem>();
+    private ClusterManager<MyItem> mClusterManager = null;
 
     private final int MAP_STATUS_CHANGE = 100;
     private Handler handler = new Handler() {
@@ -75,16 +79,80 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_marker_cluster_demo);
         mMapView = (MapView) findViewById(R.id.bmapView);
+        maker_update = (Button) findViewById(R.id.btn_maker_update);
+        maker_add = (Button) findViewById(R.id.btn_maker_add);
+        maker_remove = (Button) findViewById(R.id.btn_maker_remove);
+        maker_update.setOnClickListener(this);
+        maker_add.setOnClickListener(this);
+        maker_remove.setOnClickListener(this);
         ms = new MapStatus.Builder().target(new LatLng(35.914935, 120.403119)).zoom(8).build();
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setOnMapLoadedCallback(this);
         mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
 
         // 添加Marker点
-        getAirPortList("1,2,3,4");
-        getadta();
-        // addMarkers();
+        //getAirPortList("1,2,3,4");
+        // getadta();
+        mClusterManager = new ClusterManager<MyItem>(this, mBaiduMap, 2);
+        // 设置地图监听，当地图状态发生改变时，进行点聚合运算
+        mBaiduMap.setOnMapStatusChangeListener(mClusterManager);
+        // 设置maker点击时的响应
+        mBaiduMap.setOnMarkerClickListener(mClusterManager);
+        mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Bundle bundleA = new Bundle();
+                bundleA.putString("index", "004");
+                MyItem myItem = new MyItem(latLng, bundleA);
+                items.add(myItem);
+                mClusterManager.addItem(myItem);
+            }
 
+            @Override
+            public boolean onMapPoiClick(MapPoi mapPoi) {
+                return false;
+            }
+        });
+        addMarkers();
+        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyItem>() {
+            @Override
+            public boolean onClusterClick(Cluster<MyItem> cluster) {
+                Toast.makeText(MarkerClusterDemo.this,
+                        "有" + cluster.getSize() + "个点", Toast.LENGTH_SHORT).show();
+
+                List<MyItem> items = (List<MyItem>) cluster.getItems();
+                LatLngBounds.Builder builder2 = new LatLngBounds.Builder();
+                int i = 0;
+                for (MyItem myItem : items) {
+                    builder2 = builder2.include(myItem.getPosition());
+                    Log.i("map", "log: i=" + i++ + " pos=" + myItem.getPosition().toString());
+                }
+
+                LatLngBounds latlngBounds = builder2.build();
+                MapStatusUpdate u = MapStatusUpdateFactory.newLatLngBounds(latlngBounds, mMapView.getWidth(), mMapView.getHeight());
+                mBaiduMap.animateMapStatus(u);
+                Log.i("map", "log: mBaiduMap.animateMapStatus(u)");
+
+                return false;
+            }
+        });
+
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
+            @Override
+            public boolean onClusterItemClick(MyItem item) {
+                String showText = "点击单个Item";
+
+                if (item.getBundle() != null) {
+                    showText += " index=" + item.getBundle().getString("index");
+                }
+                Toast.makeText(MarkerClusterDemo.this,
+                        showText, Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
+        });
+
+        mClusterManager.setHandler(handler, MAP_STATUS_CHANGE); //设置handler
 
     }
 
@@ -109,13 +177,13 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
      * 获取所有的机场列表并将机场maker的配置装进集合
      */
     private void getAirPortList(String type) {
-        final ClusterManager2<MyItem> mClusterManager= new ClusterManager2<MyItem>(this, mBaiduMap,2);
+        final ClusterManager<MyItem> mClusterManager = new ClusterManager<MyItem>(this, mBaiduMap, 2);
         // 设置地图监听，当地图状态发生改变时，进行点聚合运算
         mBaiduMap.setOnMapStatusChangeListener(mClusterManager);
         // 设置maker点击时的响应
         mBaiduMap.setOnMarkerClickListener(mClusterManager);
 
-        mClusterManager.setOnClusterClickListener(new ClusterManager2.OnClusterClickListener<MyItem>() {
+        mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyItem>() {
             @Override
             public boolean onClusterClick(Cluster<MyItem> cluster) {
                 Toast.makeText(MarkerClusterDemo.this,
@@ -138,7 +206,7 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
             }
         });
 
-        mClusterManager.setOnClusterItemClickListener(new ClusterManager2.OnClusterItemClickListener<MyItem>() {
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
             @Override
             public boolean onClusterItemClick(MyItem item) {
                 String showText = "点击单个Item";
@@ -166,11 +234,11 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
                     if (arJsonArray != null && arJsonArray.length() > 0) {
                         for (int i = 0; i < arJsonArray.length(); i++) {
                             Bundle bundleA = new Bundle();
-                            AirPortBean pointBean = new Gson().fromJson(arJsonArray.optJSONObject(i).toString(),AirPortBean.class);
+                            AirPortBean pointBean = new Gson().fromJson(arJsonArray.optJSONObject(i).toString(), AirPortBean.class);
 
                             bundleA.putInt("type", pointBean.getType());
                             bundleA.putSerializable("data", pointBean);
-                            items.add(new MyItem(new LatLng(pointBean.getLatitude(),pointBean.getLongitude()), bundleA));
+                            items.add(new MyItem(new LatLng(pointBean.getLatitude(), pointBean.getLongitude()), bundleA));
 
                         }
                         mClusterManager.addItems(items);
@@ -201,8 +269,9 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
 
 
     }
+
     private void getadta() {
-        final ClusterManager<MyItem> mClusterManager= new ClusterManager<MyItem>(this, mBaiduMap,1);
+        final ClusterManager<MyItem> mClusterManager = new ClusterManager<MyItem>(this, mBaiduMap, 1);
         // 设置地图监听，当地图状态发生改变时，进行点聚合运算
         mBaiduMap.setOnMapStatusChangeListener(mClusterManager);
         // 设置maker点击时的响应
@@ -328,7 +397,7 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
         bundleB.putString("index", "002");
         Bundle bundleC = new Bundle();
         bundleC.putString("index", "003");
-        List<MyItem> items = new ArrayList<MyItem>();
+
         items.add(new MyItem(llA, bundleA));
         items.add(new MyItem(llB, bundleB));
         items.add(new MyItem(llC, bundleC));
@@ -337,8 +406,35 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
         items.add(new MyItem(llF));
         items.add(new MyItem(llG));
 
-       //mClusterManager.addItems(items);
+        mClusterManager.addItems(items);
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_maker_update:
+                MyItem myItem=items.get(items.size() - 1);
+                Bundle bundle=myItem.getBundle();
+                bundle.putString("index", "marker测试更新");
+                myItem.setmBundle(bundle);
+                mClusterManager.updateItem(myItem);
+                //items.remove(items.get(items.size() - 1));
+                break;
+            case R.id.btn_maker_add:
+                LatLng llG = new LatLng(35.996965, 120.411394);
+
+                Bundle bundleA = new Bundle();
+                bundleA.putString("index", "新增的marker");
+                mClusterManager.addItem((new MyItem(llG)));
+                break;
+            case R.id.btn_maker_remove:
+
+                mClusterManager.removeItem(items.get(items.size() - 1));
+                items.remove(items.get(items.size() - 1));
+                // mClusterManager.clearItems();
+                break;
+        }
     }
 
     /**
@@ -358,6 +454,14 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
             mBundle = bundle;
         }
 
+        public Bundle getmBundle() {
+            return mBundle;
+        }
+
+        public void setmBundle(Bundle mBundle) {
+            this.mBundle = mBundle;
+        }
+
         @Override
         public LatLng getPosition() {
             return mPosition;
@@ -367,7 +471,7 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
         public BitmapDescriptor getBitmapDescriptor() {
             int iconId = R.drawable.icon_gcoding;
             if (mBundle != null) {
-                if (112 == mBundle.getInt("type")) {
+                /*if (112 == mBundle.getInt("type")) {
                     iconId = R.drawable.fixpoint;
                 }else if (1 == mBundle.getInt("type")){
                     iconId = R.drawable.aiport_plan;
@@ -376,6 +480,15 @@ public class MarkerClusterDemo extends Activity implements OnMapLoadedCallback {
                 }else if (3 == mBundle.getInt("type")){
                     iconId = R.drawable.aiport_hihang;
                 }else if (4 == mBundle.getInt("type")){
+                    iconId = R.drawable.aiport_start;
+                }*/
+                if ("001".contentEquals(mBundle.getString("index"))) {
+                    iconId = R.drawable.aiport_plan;
+                } else if ("002".contentEquals(mBundle.getString("index"))) {
+                    iconId = R.drawable.aiport_nong;
+                } else if ("003".contentEquals(mBundle.getString("index"))) {
+                    iconId = R.drawable.aiport_hihang;
+                } else if ("003".contentEquals(mBundle.getString("index"))) {
                     iconId = R.drawable.aiport_start;
                 }
             }
